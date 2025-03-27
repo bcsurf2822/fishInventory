@@ -2,15 +2,12 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5126/api";
 
-
 export const getAllMarkets = async () => {
   try {
-    const response = await axios.get("http://localhost:5126/api/fishmarket/getall");
-    console.log(response.data);
+    const response = await axios.get(`${API_URL}/fishmarket/inventory`);
     return response.data;
-    
   } catch (error) {
-    console.error('Error fetching market data:', error);
+    console.error("Error fetching market data:", error);
     throw error;
   }
 };
