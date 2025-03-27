@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { getAllMarkets, deleteMarket } from "../../../api/markets";
+import {
+  getAllMarkets,
+  deleteMarket,
+  addSpeciesToInventory,
+  deleteFishFromInventory,
+} from "../../../api/markets";
+import { getFishForInventory } from "../../../api/fish";
+import { getFishImage } from "../../../src/assets/fishImageMap";
 
 const FishBoard = () => {
   const [markets, setMarkets] = useState([]);
@@ -10,15 +17,7 @@ const FishBoard = () => {
   const [marketToDelete, setMarketToDelete] = useState(null);
   const [showAddFishMenu, setShowAddFishMenu] = useState(false);
   const [newFish, setNewFish] = useState({ name: "", price: "" });
-
-  // Dummy fish data
-  const dummyFish = [
-    { name: "Salmon", price: 12.99 },
-    { name: "Tuna", price: 15.99 },
-    { name: "Cod", price: 9.99 },
-    { name: "Halibut", price: 18.99 },
-    { name: "Trout", price: 11.99 },
-  ];
+  const [availableFish, setAvailableFish] = useState([]);
 
   useEffect(() => {
     const fetchMarkets = async () => {
@@ -65,7 +64,10 @@ const FishBoard = () => {
       await deleteMarket(marketToDelete.id);
       console.log("Market deleted successfully");
 
-      console.log("Updating local state - removing market ID:", marketToDelete.id);
+      console.log(
+        "Updating local state - removing market ID:",
+        marketToDelete.id
+      );
       setMarkets(markets.filter((m) => m.id !== marketToDelete.id));
 
       if (selectedMarket?.id === marketToDelete.id) {
@@ -88,21 +90,90 @@ const FishBoard = () => {
     setMarketToDelete(null);
   };
 
-  const handleAddFishClick = () => {
-    setShowAddFishMenu(true);
+  const handleAddFishClick = async () => {
+    try {
+      const fishList = await getFishForInventory();
+      console.log("Fetched available fish:", fishList);
+      setAvailableFish(fishList);
+      setShowAddFishMenu(true);
+    } catch (error) {
+      console.error("Error fetching available fish:", error);
+      setError("Failed to load available fish. Please try again.");
+    }
   };
 
   const handleFishSelect = (fish) => {
     setNewFish(fish);
   };
 
-  const handleAddFishSubmit = () => {
-    console.log("Adding fish to market:", {
-      market: selectedMarket.marketName,
-      fish: newFish
-    });
-    setShowAddFishMenu(false);
-    setNewFish({ name: "", price: "" });
+  const handleAddFishSubmit = async () => {
+    if (!selectedMarket?.id || !newFish?.id) {
+      console.error("Missing market ID or fish ID");
+      setError("Cannot add fish: Missing required data");
+      return;
+    }
+
+    try {
+      console.log("Adding fish to market:", {
+        marketId: selectedMarket.id,
+        fishId: newFish.id,
+      });
+
+      await addSpeciesToInventory(selectedMarket.id, newFish.id);
+      console.log("Fish added successfully");
+
+      // Refresh the markets list to show the new fish
+      const updatedMarkets = await getAllMarkets();
+      setMarkets(updatedMarkets);
+
+      // Update selected market with new data
+      const updatedMarket = updatedMarkets.find(
+        (m) => m.id === selectedMarket.id
+      );
+      if (updatedMarket) {
+        setSelectedMarket(updatedMarket);
+      }
+
+      // Reset the form
+      setShowAddFishMenu(false);
+      setNewFish({ name: "", price: "" });
+    } catch (error) {
+      console.error("Error adding fish to market:", error);
+      setError("Failed to add fish. Please try again.");
+    }
+  };
+
+  const handleDeleteFish = async (species) => {
+    if (!selectedMarket?.id || !species?.id) {
+      console.error("Missing market ID or species ID");
+      setError("Cannot delete fish: Missing required data");
+      return;
+    }
+
+    try {
+      console.log("Deleting fish from market:", {
+        marketId: selectedMarket.id,
+        speciesId: species.id,
+      });
+
+      await deleteFishFromInventory(selectedMarket.id, species.id);
+      console.log("Fish deleted successfully");
+
+      // Refresh the markets list to show the updated state
+      const updatedMarkets = await getAllMarkets();
+      setMarkets(updatedMarkets);
+
+      // Update selected market with new data
+      const updatedMarket = updatedMarkets.find(
+        (m) => m.id === selectedMarket.id
+      );
+      if (updatedMarket) {
+        setSelectedMarket(updatedMarket);
+      }
+    } catch (error) {
+      console.error("Error deleting fish from market:", error);
+      setError("Failed to delete fish. Please try again.");
+    }
   };
 
   if (loading) {
@@ -188,6 +259,13 @@ const FishBoard = () => {
                 key={species.name}
                 className="bg-gray-50 p-4 rounded border border-gray-200"
               >
+                <div className="h-32 bg-gray-200 rounded overflow-hidden mb-2">
+                  <img 
+                    src={getFishImage(species.name)} 
+                    alt={species.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <h4 className="text-lg font-medium text-gray-800 mb-2">
                   {species.name}
                 </h4>
@@ -197,11 +275,7 @@ const FishBoard = () => {
                 <div className="mt-4 flex gap-2">
                   <button
                     className="flex-1 bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors duration-200 font-medium"
-                    onClick={() => {
-                      console.log(
-                        `Deleting ${species.name} from ${selectedMarket.marketName}`
-                      );
-                    }}
+                    onClick={() => handleDeleteFish(species)}
                   >
                     Delete
                   </button>
@@ -213,16 +287,21 @@ const FishBoard = () => {
                 <h4 className="text-xs text-gray-600 mb-2">Select Fish</h4>
                 <div className="h-24 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-gray-200 [&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-thumb]:rounded-full">
                   <div className="space-y-1">
-                    {dummyFish.map((fish) => (
+                    {availableFish.map((fish) => (
                       <button
-                        key={fish.name}
+                        key={fish.id}
                         onClick={() => handleFishSelect(fish)}
-                        className={`w-full px-2 py-1 text-left text-xs rounded-sm ${
-                          newFish.name === fish.name
+                        className={`w-full px-2 py-1 text-left text-xs rounded-sm flex items-center gap-2 ${
+                          newFish.id === fish.id
                             ? "bg-gray-300"
                             : "hover:bg-gray-200"
                         }`}
                       >
+                        <img 
+                          src={getFishImage(fish.name)} 
+                          alt={fish.name}
+                          className="w-8 h-8 object-cover rounded"
+                        />
                         {fish.name} - ${fish.price.toFixed(2)}
                       </button>
                     ))}
@@ -237,7 +316,7 @@ const FishBoard = () => {
                   </button>
                   <button
                     onClick={handleAddFishSubmit}
-                    disabled={!newFish.name}
+                    disabled={!newFish.id}
                     className="px-2 py-0.5 text-xs bg-blue-100 text-blue-600 border border-blue-300 rounded-sm hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Add

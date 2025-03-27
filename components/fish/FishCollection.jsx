@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAllFish, updateFishPrice } from "../../api/fish";
+import { getFishImage } from "../../src/assets/fishImageMap";
 
 const FishCollection = () => {
   const [fish, setFish] = useState([]);
@@ -85,8 +86,12 @@ const FishCollection = () => {
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
           >
             {/* Fish Image Placeholder */}
-            <div className="h-48 bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-400 text-lg">{fish.name}</span>
+            <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+              <img 
+                src={getFishImage(fish.name)} 
+                alt={fish.name}
+                className="w-full h-full object-cover"
+              />
             </div>
 
             {/* Fish Information */}

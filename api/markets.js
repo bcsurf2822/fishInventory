@@ -51,10 +51,21 @@ export const deleteMarket = async (marketId) => {
   }
 };
 
-export const removeSpeciesFromMarket = async (marketId, speciesId) => {
+export const addSpeciesToInventory = async (marketId, speciesId) => {
+  try {
+    const response = await axios.post(`${API_URL}/addtoinventory/${marketId}/${speciesId}`);
+    console.log(response.data); 
+    return response.data;
+  } catch (error) {
+    console.error("Error adding species to market:", error?.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const deleteFishFromInventory = async (marketId, speciesId) => {
   try {
     const response = await axios.delete(
-      `${API_URL}/removeSpeciesFromMarket/${marketId}/${speciesId}`
+      `${API_URL}/deletefrominventory/${marketId}/${speciesId}`
     );
     console.log("Species removed successfully.");
     return response.data;
