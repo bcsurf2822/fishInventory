@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router";
 import Home from "../components/home/Home";
 import Nav from "../components/Nav";
 import FishCollection from "../components/fish/FishCollection";
+import AddMarketForm from "../components/market/AddMarketForm";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/fish" element={<FishCollection />} />
+        <Route path="/add-market" element={<AddMarketForm />} />
       </Routes>
     </div>
   );

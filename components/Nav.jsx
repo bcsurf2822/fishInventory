@@ -23,12 +23,6 @@ const Nav = () => {
         >
           Fish
         </Link>
-        <Link
-          to="/route3"
-          className="text-neutral-700 hover:text-neutral-900 font-medium"
-        >
-          Route 3
-        </Link>
       </div>
 
       <div className="flex gap-2">
