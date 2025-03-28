@@ -25,7 +25,7 @@ export const getFishForInventory = async () => {
 };
 
 export const updateFishPrice = async (fishId, newPrice) => {
-  const url = `http://localhost:5126/updatePartial/${fishId}`;
+  const url = `http://localhost:5126/updatepartial/${fishId}`;
 
   const patchData = [
     {
