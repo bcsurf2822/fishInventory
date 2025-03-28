@@ -1,27 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router";
 import { login } from "../api/auth";
+import { useAuth } from "../contexts/authContext";
 import toast from "react-hot-toast";
 
 const Nav = () => {
+  const { isAuthenticated, username, login: authLogin, logout: authLogout } = useAuth();
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
   });
-  const [loggedInUser, setLoggedInUser] = useState(null);
-
-  useEffect(() => {
-    const username = localStorage.getItem("username");
-    if (username) {
-      setLoggedInUser(username);
-    }
-  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { username: loggedInUsername } = await login(credentials.username, credentials.password);
-      setLoggedInUser(loggedInUsername);
+      const { token, username: loggedInUsername } = await login(credentials.username, credentials.password);
+      authLogin(token, loggedInUsername);
       setCredentials({ username: "", password: "" });
       toast.success("Successfully logged in!");
     } catch (error) {
@@ -32,9 +26,8 @@ const Nav = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    setLoggedInUser(null);
+    authLogout();
+    toast.success("Successfully logged out!");
   };
 
   return (
@@ -61,7 +54,7 @@ const Nav = () => {
       </div>
 
       <div className="flex gap-2">
-        {!loggedInUser ? (
+        {!isAuthenticated ? (
           <>
             <input
               type="text"
@@ -86,7 +79,7 @@ const Nav = () => {
           </>
         ) : (
           <div className="flex items-center gap-4">
-            <span className="text-neutral-700">Welcome, {loggedInUser}!</span>
+            <span className="text-neutral-700">Welcome, {username}!</span>
             <button 
               onClick={handleLogout}
               className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"

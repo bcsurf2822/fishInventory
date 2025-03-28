@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getAllMarkets,
   deleteMarket,
@@ -94,11 +94,11 @@ const FishBoard = () => {
     try {
       await addSpeciesToInventory(selectedMarket.id, newFish.id);
 
-      // Refresh the markets list to show the new fish
+   
       const updatedMarkets = await getAllMarkets();
       setMarkets(updatedMarkets);
 
-      // Update selected market with new data
+
       const updatedMarket = updatedMarkets.find(
         (m) => m.id === selectedMarket.id
       );
@@ -106,7 +106,7 @@ const FishBoard = () => {
         setSelectedMarket(updatedMarket);
       }
 
-      // Reset the form
+
       setShowAddFishMenu(false);
       setNewFish({ name: "", price: "" });
     } catch {
@@ -120,19 +120,22 @@ const FishBoard = () => {
     try {
       await deleteFishFromInventory(selectedMarket.id, species.id);
 
-      // Refresh the markets list to show the updated state
+
       const updatedMarkets = await getAllMarkets();
       setMarkets(updatedMarkets);
 
-      // Update selected market with new data
+
       const updatedMarket = updatedMarkets.find(
         (m) => m.id === selectedMarket.id
       );
       if (updatedMarket) {
         setSelectedMarket(updatedMarket);
       }
-    } catch {
-      // Error handled in API layer
+      toast.success("Fish deleted successfully");
+    } catch (error) {
+      const errorMessage = error.response?.data || "Failed to delete fish. Please try again.";
+      toast.error(errorMessage);
+      console.error("Error deleting fish:", error);
     }
   };
 
@@ -165,12 +168,14 @@ const FishBoard = () => {
                 >
                   {market.marketName} - {market.location}
                 </button>
-                <button
-                  onClick={() => handleDeleteClick(market)}
-                  className="px-2 py-1 text-xs text-red-600 hover:bg-red-100"
-                >
-                  ×
-                </button>
+                {isAuthenticated && (
+                  <button
+                    onClick={() => handleDeleteClick(market)}
+                    className="px-2 py-1 text-xs text-red-600 hover:bg-red-100"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -275,7 +280,7 @@ const FishBoard = () => {
                   </button>
                 </div>
               </div>
-            ) : (
+            ) : isAuthenticated ? (
               <button
                 onClick={handleAddFishClick}
                 className="bg-gray-50 p-4 rounded border border-gray-200 border-dashed flex items-center justify-center hover:bg-gray-100 transition-colors duration-200"
@@ -285,7 +290,7 @@ const FishBoard = () => {
                   <div className="text-sm text-gray-600">Add Fish</div>
                 </div>
               </button>
-            )}
+            ) : null}
           </div>
         </div>
       ) : (
