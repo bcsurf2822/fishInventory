@@ -7,12 +7,14 @@ import {
 } from "../../../api/markets";
 import { getFishForInventory } from "../../../api/fish";
 import { getFishImage } from "../../../src/assets/fishImageMap";
+import { useAuth } from "../../../contexts/authContext";
+import toast from "react-hot-toast";
 
 const FishBoard = () => {
+  const { isAuthenticated } = useAuth();
   const [markets, setMarkets] = useState([]);
   const [selectedMarket, setSelectedMarket] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [marketToDelete, setMarketToDelete] = useState(null);
   const [showAddFishMenu, setShowAddFishMenu] = useState(false);
@@ -29,9 +31,8 @@ const FishBoard = () => {
         if (response.length > 0) {
           setSelectedMarket(response[0]);
         }
-      } catch (error) {
-        console.error("Error fetching markets:", error);
-        setError("Failed to load markets. Please try again later.");
+      } catch {
+        // Error handled in API layer
       } finally {
         setLoading(false);
       }
@@ -40,52 +41,35 @@ const FishBoard = () => {
   }, []);
 
   const handleDeleteClick = (market) => {
-    console.log("Delete button clicked for market:", market);
-    if (!market.id) {
-      console.error("Market ID is missing:", market);
-      setError("Cannot delete market: Missing ID");
-      return;
-    }
+    if (!market.id) return;
     setMarketToDelete(market);
     setShowDeleteModal(true);
   };
 
   const handleConfirmDelete = async () => {
-    if (!marketToDelete?.id) {
-      console.error("Cannot delete market: No valid ID found");
-      setError("Cannot delete market: Missing ID");
-      return;
-    }
-
-    console.log("Starting delete process for market ID:", marketToDelete.id);
+    if (!marketToDelete?.id) return;
 
     try {
-      console.log("Calling deleteMarket API with ID:", marketToDelete.id);
       await deleteMarket(marketToDelete.id);
-      console.log("Market deleted successfully");
-
-      console.log(
-        "Updating local state - removing market ID:",
-        marketToDelete.id
-      );
-      setMarkets(markets.filter((m) => m.id !== marketToDelete.id));
-
+      setMarkets(prevMarkets => prevMarkets.filter(m => m.id !== marketToDelete.id));
       if (selectedMarket?.id === marketToDelete.id) {
-        console.log("Clearing selected market as it was deleted");
         setSelectedMarket(null);
       }
-
       setShowDeleteModal(false);
       setMarketToDelete(null);
-      console.log("Delete process completed");
+      toast.success("Market deleted successfully");
     } catch (error) {
-      console.error("Error deleting market:", error.message);
-      setError("Failed to delete market. Please try again.");
+      const errorMessage = typeof error.response?.data === 'string' 
+        ? error.response.data 
+        : "Failed to delete market. Please try again.";
+      toast.error(errorMessage);
+      console.error("Error deleting market:", errorMessage);
+      setShowDeleteModal(false);
+      setMarketToDelete(null);
     }
   };
 
   const handleCancelDelete = () => {
-    console.log("Delete operation cancelled");
     setShowDeleteModal(false);
     setMarketToDelete(null);
   };
@@ -93,12 +77,10 @@ const FishBoard = () => {
   const handleAddFishClick = async () => {
     try {
       const fishList = await getFishForInventory();
-      console.log("Fetched available fish:", fishList);
       setAvailableFish(fishList);
       setShowAddFishMenu(true);
-    } catch (error) {
-      console.error("Error fetching available fish:", error);
-      setError("Failed to load available fish. Please try again.");
+    } catch {
+      // Error handled in API layer
     }
   };
 
@@ -107,20 +89,10 @@ const FishBoard = () => {
   };
 
   const handleAddFishSubmit = async () => {
-    if (!selectedMarket?.id || !newFish?.id) {
-      console.error("Missing market ID or fish ID");
-      setError("Cannot add fish: Missing required data");
-      return;
-    }
+    if (!selectedMarket?.id || !newFish?.id) return;
 
     try {
-      console.log("Adding fish to market:", {
-        marketId: selectedMarket.id,
-        fishId: newFish.id,
-      });
-
       await addSpeciesToInventory(selectedMarket.id, newFish.id);
-      console.log("Fish added successfully");
 
       // Refresh the markets list to show the new fish
       const updatedMarkets = await getAllMarkets();
@@ -137,27 +109,16 @@ const FishBoard = () => {
       // Reset the form
       setShowAddFishMenu(false);
       setNewFish({ name: "", price: "" });
-    } catch (error) {
-      console.error("Error adding fish to market:", error);
-      setError("Failed to add fish. Please try again.");
+    } catch {
+      // Error handled in API layer
     }
   };
 
   const handleDeleteFish = async (species) => {
-    if (!selectedMarket?.id || !species?.id) {
-      console.error("Missing market ID or species ID");
-      setError("Cannot delete fish: Missing required data");
-      return;
-    }
+    if (!selectedMarket?.id || !species?.id) return;
 
     try {
-      console.log("Deleting fish from market:", {
-        marketId: selectedMarket.id,
-        speciesId: species.id,
-      });
-
       await deleteFishFromInventory(selectedMarket.id, species.id);
-      console.log("Fish deleted successfully");
 
       // Refresh the markets list to show the updated state
       const updatedMarkets = await getAllMarkets();
@@ -170,9 +131,8 @@ const FishBoard = () => {
       if (updatedMarket) {
         setSelectedMarket(updatedMarket);
       }
-    } catch (error) {
-      console.error("Error deleting fish from market:", error);
-      setError("Failed to delete fish. Please try again.");
+    } catch {
+      // Error handled in API layer
     }
   };
 
@@ -180,14 +140,6 @@ const FishBoard = () => {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
         <div className="text-xl text-gray-600">Loading markets...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <div className="text-xl text-red-600">{error}</div>
       </div>
     );
   }

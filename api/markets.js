@@ -40,13 +40,10 @@ export const createMarket = async (marketName, location) => {
 export const deleteMarket = async (marketId) => {
   try {
     const response = await axios.delete(`${API_URL}/delete/${marketId}`);
-    console.log("Market deleted successfully");
     return response.data;
   } catch (error) {
-    console.error(
-      "Error deleting market:",
-      error.response?.data || error.message
-    );
+    const errorMessage = error.response?.data || "Failed to delete market. Please try again.";
+    console.error("Error deleting market:", errorMessage);
     throw error;
   }
 };
