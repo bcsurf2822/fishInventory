@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5126/api/fish";
+const API_URL = "http://localhost:5126/";
 
 export const getAllFish = async () => {
   try {
-    const response = await axios.get(`${API_URL}/getall`);
+    const response = await axios.get(`${API_URL}api/fish/getall`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -15,7 +15,7 @@ export const getAllFish = async () => {
 
 export const getFishForInventory = async () => {
   try {
-    const response = await axios.get(`${API_URL}/fishinventory`);
+    const response = await axios.get(`${API_URL}api/fish/fishinventory`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -24,33 +24,24 @@ export const getFishForInventory = async () => {
   }
 };
 
-export const updateFishPrice = async (fishId, newPrice) => {
-  const url = `http://localhost:5126/updatepartial/${fishId}`;
-
-  const patchData = [
-    {
-      op: "replace",
-      path: "/price",
-      value: newPrice,
-    },
-  ];
-
+export const updateFishPrice = async (id, newPrice) => {
   try {
-    const response = await fetch(url, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(patchData),
-    });
+    const response = await axios.patch(
+      `${API_URL}api/fish/updatepartial/${id}`,
+      [
+        {
+          operationType: 0,
+          path: "/price",
+          op: "replace",
+          value: newPrice,
+        },
+      ]
+    );
 
-    if (response.ok) {
-      console.log("Fish price updated successfully!");
-    } else {
-      const errorData = await response.json();
-      console.error("Failed to update fish:", errorData);
-    }
+    console.log("Fish price updated successfully!");
+    return response.data;
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error updating fish price:", error);
+    throw error;
   }
 };
