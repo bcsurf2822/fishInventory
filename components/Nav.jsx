@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { login } from "../api/auth";
+import toast from "react-hot-toast";
 
 const Nav = () => {
   const [credentials, setCredentials] = useState({
@@ -19,10 +20,13 @@ const Nav = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await login(credentials.username, credentials.password);
-      setLoggedInUser(credentials.username);
+      const { username: loggedInUsername } = await login(credentials.username, credentials.password);
+      setLoggedInUser(loggedInUsername);
       setCredentials({ username: "", password: "" });
+      toast.success("Successfully logged in!");
     } catch (error) {
+      const errorMessage = error.response?.data || "Login failed. Please check your credentials.";
+      toast.error(errorMessage);
       console.error("Login failed:", error);
     }
   };

@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5126/";
+const API_URL = "http://localhost:5126";
 
 export const getAllFish = async () => {
   try {
-    const response = await axios.get(`${API_URL}api/fish/getall`);
+    const response = await axios.get(`${API_URL}/api/fish/getall`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -15,7 +15,7 @@ export const getAllFish = async () => {
 
 export const getFishForInventory = async () => {
   try {
-    const response = await axios.get(`${API_URL}api/fish/fishinventory`);
+    const response = await axios.get(`${API_URL}/api/fish/fishinventory`);
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -25,9 +25,15 @@ export const getFishForInventory = async () => {
 };
 
 export const updateFishPrice = async (id, newPrice) => {
+  const token = localStorage.getItem("authToken"); 
+
+  if (!token) {
+    throw new Error("No token found. Please log in first.");
+  }
+
   try {
     const response = await axios.patch(
-      `${API_URL}api/fish/updatepartial/${id}`,
+      `${API_URL}/api/fish/updatepartial/${id}`,
       [
         {
           operationType: 0,
@@ -35,13 +41,20 @@ export const updateFishPrice = async (id, newPrice) => {
           op: "replace",
           value: newPrice,
         },
-      ]
+      ],
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
     console.log("Fish price updated successfully!");
     return response.data;
   } catch (error) {
-    console.error("Error updating fish price:", error);
+    const errorMessage =
+      error.response?.data || "Failed to update fish price. Please try again.";
+    console.error("Error updating fish price:", errorMessage);
     throw error;
   }
 };

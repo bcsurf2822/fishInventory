@@ -23,51 +23,112 @@ export const getFishByMarketId = async (marketId) => {
 };
 
 export const createMarket = async (marketName, location) => {
+  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
+
+  if (!token) {
+    throw new Error("No token found. Please log in first.");
+  }
+
   try {
-    const response = await axios.post(`${API_URL}/createnew`, {
-      marketName,
-      location,
-      species: [],
-    });
+    const response = await axios.post(
+      `${API_URL}/createnew`,
+      {
+        marketName,
+        location,
+        species: [],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
     console.log("Market created successfully");
     return response.data;
   } catch (error) {
-    console.error("Error creating market:", error);
+    const errorMessage =
+      error.response?.data || "Failed to create market. Please try again.";
+    console.error("Error creating market:", errorMessage);
     throw error;
   }
 };
 
 export const deleteMarket = async (marketId) => {
+  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
+
+  if (!token) {
+    throw new Error("No token found. Please log in first.");
+  }
+
   try {
-    const response = await axios.delete(`${API_URL}/delete/${marketId}`);
+    const response = await axios.delete(`${API_URL}/delete/${marketId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Market deleted successfully.");
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data || "Failed to delete market. Please try again.";
+    const errorMessage =
+      error.response?.data || "Failed to delete market. Please try again.";
     console.error("Error deleting market:", errorMessage);
     throw error;
   }
 };
 
 export const addSpeciesToInventory = async (marketId, speciesId) => {
+  const token = localStorage.getItem("authToken"); // Retrieve token from local storage
+
+  if (!token) {
+    throw new Error("No token found. Please login first.");
+  }
+
   try {
-    const response = await axios.post(`${API_URL}/addtoinventory/${marketId}/${speciesId}`);
-    console.log(response.data); 
+    const response = await axios.post(
+      `${API_URL}/addtoinventory/${marketId}/${speciesId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error("Error adding species to market:", error?.response?.data || error.message);
+    console.error(
+      "Error adding species to market:",
+      error?.response?.data || error.message
+    );
     throw error;
   }
 };
 
 export const deleteFishFromInventory = async (marketId, speciesId) => {
+  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
+
+  if (!token) {
+    throw new Error("No token found. Please log in first.");
+  }
+
   try {
     const response = await axios.delete(
-      `${API_URL}/deletefrominventory/${marketId}/${speciesId}`
+      `${API_URL}/deletefrominventory/${marketId}/${speciesId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     console.log("Species removed successfully.");
     return response.data;
   } catch (error) {
-    console.error("Error removing species from market:", error);
+    console.error(
+      "Error removing species from market:",
+      error?.response?.data || error.message
+    );
     throw error;
   }
 };

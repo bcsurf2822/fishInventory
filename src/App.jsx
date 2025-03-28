@@ -10,7 +10,7 @@ function App() {
   return (
     <AuthProvider>
       <div>
-        <Toaster position="top-right" />
+        <Toaster position="top-left" />
         <Nav />
         <Routes>
           <Route path="/" element={<Home />} />
