@@ -5,7 +5,12 @@ import { useAuth } from "../contexts/authContext";
 import toast from "react-hot-toast";
 
 const Nav = () => {
-  const { isAuthenticated, username, login: authLogin, logout: authLogout } = useAuth();
+  const {
+    isAuthenticated,
+    username,
+    login: authLogin,
+    logout: authLogout,
+  } = useAuth();
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -14,12 +19,16 @@ const Nav = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const { token, username: loggedInUsername } = await login(credentials.username, credentials.password);
+      const { token, username: loggedInUsername } = await login(
+        credentials.username,
+        credentials.password
+      );
       authLogin(token, loggedInUsername);
       setCredentials({ username: "", password: "" });
       toast.success("Successfully logged in!");
     } catch (error) {
-      const errorMessage = error.response?.data || "Login failed. Please check your credentials.";
+      const errorMessage =
+        error.response?.data || "Login failed. Please check your credentials.";
       toast.error(errorMessage);
       console.error("Login failed:", error);
     }
@@ -60,17 +69,21 @@ const Nav = () => {
               type="text"
               placeholder="username"
               value={credentials.username}
-              onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+              onChange={(e) =>
+                setCredentials({ ...credentials, username: e.target.value })
+              }
               className="px-3 py-1 rounded border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-400"
             />
             <input
               type="password"
               placeholder="password"
               value={credentials.password}
-              onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+              onChange={(e) =>
+                setCredentials({ ...credentials, password: e.target.value })
+              }
               className="px-3 py-1 rounded border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-400"
             />
-            <button 
+            <button
               onClick={handleLogin}
               className="px-4 py-1 bg-neutral-700 text-white rounded hover:bg-neutral-800 transition-colors"
             >
@@ -80,7 +93,7 @@ const Nav = () => {
         ) : (
           <div className="flex items-center gap-4">
             <span className="text-neutral-700">Welcome, {username}!</span>
-            <button 
+            <button
               onClick={handleLogout}
               className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
             >

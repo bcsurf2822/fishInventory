@@ -51,7 +51,9 @@ const FishBoard = () => {
 
     try {
       await deleteMarket(marketToDelete.id);
-      setMarkets(prevMarkets => prevMarkets.filter(m => m.id !== marketToDelete.id));
+      setMarkets((prevMarkets) =>
+        prevMarkets.filter((m) => m.id !== marketToDelete.id)
+      );
       if (selectedMarket?.id === marketToDelete.id) {
         setSelectedMarket(null);
       }
@@ -59,9 +61,10 @@ const FishBoard = () => {
       setMarketToDelete(null);
       toast.success("Market deleted successfully");
     } catch (error) {
-      const errorMessage = typeof error.response?.data === 'string' 
-        ? error.response.data 
-        : "Failed to delete market. Please try again.";
+      const errorMessage =
+        typeof error.response?.data === "string"
+          ? error.response.data
+          : "Failed to delete market. Please try again.";
       toast.error(errorMessage);
       console.error("Error deleting market:", errorMessage);
       setShowDeleteModal(false);
@@ -94,10 +97,8 @@ const FishBoard = () => {
     try {
       await addSpeciesToInventory(selectedMarket.id, newFish.id);
 
-   
       const updatedMarkets = await getAllMarkets();
       setMarkets(updatedMarkets);
-
 
       const updatedMarket = updatedMarkets.find(
         (m) => m.id === selectedMarket.id
@@ -105,7 +106,6 @@ const FishBoard = () => {
       if (updatedMarket) {
         setSelectedMarket(updatedMarket);
       }
-
 
       setShowAddFishMenu(false);
       setNewFish({ name: "", price: "" });
@@ -120,10 +120,8 @@ const FishBoard = () => {
     try {
       await deleteFishFromInventory(selectedMarket.id, species.id);
 
-
       const updatedMarkets = await getAllMarkets();
       setMarkets(updatedMarkets);
-
 
       const updatedMarket = updatedMarkets.find(
         (m) => m.id === selectedMarket.id
@@ -133,7 +131,8 @@ const FishBoard = () => {
       }
       toast.success("Fish deleted successfully");
     } catch (error) {
-      const errorMessage = error.response?.data || "Failed to delete fish. Please try again.";
+      const errorMessage =
+        error.response?.data || "Failed to delete fish. Please try again.";
       toast.error(errorMessage);
       console.error("Error deleting fish:", error);
     }
@@ -207,7 +206,6 @@ const FishBoard = () => {
         )}
       </div>
 
-      {/* Selected Market Details */}
       {selectedMarket ? (
         <div className="bg-white rounded shadow-sm p-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -217,8 +215,8 @@ const FishBoard = () => {
                 className="bg-gray-50 p-4 rounded border border-gray-200"
               >
                 <div className="h-32 bg-gray-200 rounded overflow-hidden mb-2">
-                  <img 
-                    src={getFishImage(species.name)} 
+                  <img
+                    src={getFishImage(species.name)}
                     alt={species.name}
                     className="w-full h-full object-cover"
                   />
@@ -254,8 +252,8 @@ const FishBoard = () => {
                             : "hover:bg-gray-200"
                         }`}
                       >
-                        <img 
-                          src={getFishImage(fish.name)} 
+                        <img
+                          src={getFishImage(fish.name)}
                           alt={fish.name}
                           className="w-8 h-8 object-cover rounded"
                         />

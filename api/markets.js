@@ -23,7 +23,7 @@ export const getFishByMarketId = async (marketId) => {
 };
 
 export const createMarket = async (marketName, location) => {
-  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
+  const token = localStorage.getItem("authToken");
 
   if (!token) {
     throw new Error("No token found. Please log in first.");
@@ -55,7 +55,7 @@ export const createMarket = async (marketName, location) => {
 };
 
 export const deleteMarket = async (marketId) => {
-  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
+  const token = localStorage.getItem("authToken"); 
 
   if (!token) {
     throw new Error("No token found. Please log in first.");
@@ -79,8 +79,7 @@ export const deleteMarket = async (marketId) => {
 };
 
 export const addSpeciesToInventory = async (marketId, speciesId) => {
-  const token = localStorage.getItem("authToken"); // Retrieve token from local storage
-
+  const token = localStorage.getItem("authToken");
   if (!token) {
     throw new Error("No token found. Please login first.");
   }
@@ -107,7 +106,7 @@ export const addSpeciesToInventory = async (marketId, speciesId) => {
 };
 
 export const deleteFishFromInventory = async (marketId, speciesId) => {
-  const token = localStorage.getItem("authToken"); // Retrieve token from localStorage
+  const token = localStorage.getItem("authToken"); 
 
   if (!token) {
     throw new Error("No token found. Please log in first.");

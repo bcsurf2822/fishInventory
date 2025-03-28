@@ -9,9 +9,9 @@ export const login = async (username, password) => {
       password,
     });
 
-    const token = response.data.token; // Only expecting token
+    const token = response.data.token; 
     localStorage.setItem('authToken', token);
-    localStorage.setItem('username', username); // Use the input username
+    localStorage.setItem('username', username); 
     return { token, username };
   } catch (error) {
     console.error("Login failed:", error.response?.data || error.message);

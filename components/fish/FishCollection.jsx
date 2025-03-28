@@ -85,16 +85,14 @@ const FishCollection = () => {
             key={fish.id}
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200"
           >
-            {/* Fish Image Placeholder */}
             <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
-              <img 
-                src={getFishImage(fish.name)} 
+              <img
+                src={getFishImage(fish.name)}
                 alt={fish.name}
                 className="w-full h-full object-cover"
               />
             </div>
 
-            {/* Fish Information */}
             <div className="p-6">
               <h3 className="text-xl font-semibold text-gray-800 mb-2">
                 {fish.name}
@@ -150,7 +148,6 @@ const FishCollection = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="mt-6 flex gap-3">
                 <button
                   className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 font-medium"
