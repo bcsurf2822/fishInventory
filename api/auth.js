@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5126/api/authentication";
+const API_URL = "https://fishwebapp001-c6bvbebffqetg7gq.canadacentral-01.azurewebsites.net/api/authentication";
 
 export const login = async (username, password) => {
   try {

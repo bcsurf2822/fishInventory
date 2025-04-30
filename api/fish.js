@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5126";
+const API_URL = "https://fishwebapp001-c6bvbebffqetg7gq.canadacentral-01.azurewebsites.net";
 
 export const getAllFish = async () => {
   try {
@@ -29,7 +29,7 @@ export const updateFishPrice = async (id, newPrice) => {
 
   if (!token) {
     throw new Error("No token found. Please log in first.");
-  }
+  }``
 
   try {
     const response = await axios.patch(
