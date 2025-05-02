@@ -1,37 +1,39 @@
 // Mapping of fish names to their image paths
+const BASE_URL = "https://fishclientstorage.blob.core.windows.net/fish-images";
+
 export const fishImageMap = {
-  tuna: "/src/assets/fish/tuna.jpg",
-  "yellowfin tuna": "/src/assets/fish/yfintuna.jpg",
-  "albacore tuna": "/src/assets/fish/tuna.jpg",
-  "skipjack tuna": "/src/assets/fish/tuna.jpg",
-  "bigeye tuna": "/src/assets/fish/tuna.jpg",
+  tuna: `${BASE_URL}/tuna.jpg`,
+  "yellowfin tuna": `${BASE_URL}/yfintuna.jpg`,
+  "albacore tuna": `${BASE_URL}/tuna.jpg`,
+  "skipjack tuna": `${BASE_URL}/tuna.jpg`,
+  "bigeye tuna": `${BASE_URL}/tuna.jpg`,
 
-  salmon: "/src/assets/fish/salmon.jpg",
-  "atlantic salmon": "/src/assets/fish/salmon.jpg",
-  "pacific salmon": "/src/assets/fish/salmon.jpg",
-  "king salmon": "/src/assets/fish/salmon.jpg",
-  "sockeye salmon": "/src/assets/fish/salmon.jpg",
+  salmon: `${BASE_URL}/salmon.jpg`,
+  "atlantic salmon": `${BASE_URL}/salmon.jpg`,
+  "pacific salmon": `${BASE_URL}/salmon.jpg`,
+  "king salmon": `${BASE_URL}/salmon.jpg`,
+  "sockeye salmon": `${BASE_URL}/salmon.jpg`,
 
-  mackerel: "/src/assets/fish/mackerel.jpg",
-  "king mackerel": "/src/assets/fish/mackerel.jpg",
-  "spanish mackerel": "/src/assets/fish/mackerel.jpg",
-  "atlantic mackerel": "/src/assets/fish/mackerel.jpg",
+  mackerel: `${BASE_URL}/mackerel.jpg`,
+  "king mackerel": `${BASE_URL}/mackerel.jpg`,
+  "spanish mackerel": `${BASE_URL}/mackerel.jpg`,
+  "atlantic mackerel": `${BASE_URL}/mackerel.jpg`,
 
-  swordfish: "/src/assets/fish/sword.jpg",
-  marlin: "/src/assets/fish/marlin.jpg",
-  sailfish: "/src/assets/fish/sailfish.jpg",
+  swordfish: `${BASE_URL}/sword.jpg`,
+  marlin: `${BASE_URL}/marlin.jpg`,
+  sailfish: `${BASE_URL}/sailfish.jpg`,
 
-  "mahi mahi": "/src/assets/fish/mahi.jpg",
-  halibut: "/src/assets/fish/halibut.jpg",
-  grouper: "/src/assets/fish/grouper.jpg",
-  snapper: "/src/assets/fish/snapper.jpg",
-  anchovies: "/src/assets/fish/anchovies.jpg",
-  wrasse: "/src/assets/fish/wrasse.jpg",
-  trevally: "/src/assets/fish/trevally.jpg",
-  tarpon: "/src/assets/fish/tarpon.jpg",
-  "flying fish": "/src/assets/fish/flyingfish.jpg",
-  pompano: "/src/assets/fish/pompano.jpg",
-  sturgeon: "/src/assets/fish/sturgeon.jpg",
+  "mahi mahi": `${BASE_URL}/mahi.jpg`,
+  halibut: `${BASE_URL}/halibut.jpg`,
+  grouper: `${BASE_URL}/grouper.jpg`,
+  snapper: `${BASE_URL}/snapper.jpg`,
+  anchovies: `${BASE_URL}/anchovies.jpg`,
+  wrasse: `${BASE_URL}/wrasse.jpg`,
+  trevally: `${BASE_URL}/trevally.jpg`,
+  tarpon: `${BASE_URL}/tarpon.jpg`,
+  "flying fish": `${BASE_URL}/flyingfish.jpg`,
+  pompano: `${BASE_URL}/pompano.jpg`,
+  sturgeon: `${BASE_URL}/sturgeon.jpg`,
 };
 
 export const getFishImage = (fishName) => {
@@ -47,5 +49,5 @@ export const getFishImage = (fishName) => {
     }
   }
 
-  return "/src/assets/fish/tuna.jpg";
+  return `${BASE_URL}/tuna.jpg`;
 };
